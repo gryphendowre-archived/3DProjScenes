@@ -1,17 +1,17 @@
 #pragma strict
-var nutRot : GameObject;
+var boltRot : GameObject;
 
 
 function Start () {
-	nutRot = new GameObject();
-	nutRot.transform.position = renderer.bounds.center;
-	nutRot.transform.parent = transform.parent;
-	transform.parent = nutRot.transform;
+	boltRot = new GameObject();
+	boltRot.transform.position = renderer.bounds.center;
+	boltRot.transform.parent = transform.parent;
+	transform.parent = boltRot.transform;
 
 }
 
 function Update () {
-	nutRot.transform.Rotate(Vector3.up * Time.deltaTime*10, Space.World);
+	boltRot.transform.Rotate(Vector3.up * Time.deltaTime*10, Space.World);
 	//transform.RotateAround(
 	//transform.Rotate(Vector3.up * Time.deltaTime*10);
 	//transform.Rotate(Vector3.up * Time.deltaTime, Space.World);
