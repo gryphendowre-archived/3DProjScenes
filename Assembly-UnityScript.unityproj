@@ -44,6 +44,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Project Assets\WrenchAssets\Scripts\boltRotate.js" />
      <Compile Include="Assets\Project Assets\WrenchAssets\Scripts\testRotate.js" />
      <Compile Include="Assets\Project Assets\WrenchAssets\Scripts\testRotate2.js" />
      <Compile Include="Assets\Project Assets\WrenchAssets\Scripts\wrenchRotate.js" />
@@ -59,7 +60,7 @@
      <Compile Include="Assets\Standard Assets (Mobile)\Scripts\SmoothFollow2D.js" />
      <Compile Include="Assets\Standard Assets (Mobile)\Scripts\ZoomCamera.js" />
      <Compile Include="Assets\Standard Assets (Mobile)\Scripts\tapcontrol.js" />
-     <Compile Include="Assets\boltRotate.js" />
+     <Compile Include="Assets\testSnap.js" />
      <None Include="Assets\Standard Assets\Projectors\Guidelines.txt" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\Image Based\Sources\Shaders\_DepthOfField\SeparableWeightedBlur.shader" />
      <None Include="Assets\Standard Assets\Image Effects (Pro Only)\Image Based\Sources\Shaders\_BloomAndFlares\AddStuff.shader" />

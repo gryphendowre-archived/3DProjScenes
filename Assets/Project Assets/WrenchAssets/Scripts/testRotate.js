@@ -11,6 +11,10 @@ var nPB : GameObject;
 var startM : Transform;
 var endM : Transform;
 
+//force rotation arrows
+var clockArrow : Transform;
+var countArrow : Transform;
+
 //rotation testing
 private var originalRot : Quaternion;
 private var offsetRot : Quaternion;
@@ -24,6 +28,11 @@ function Start () {
 
 	wrenchModel = transform.FindChild("Model");
 	wrenchTurnAxis = wrenchModel.transform.FindChild("mesh29");
+	
+	clockArrow = wrenchModel.transform.FindChild("ClockwiseForceArrow").FindChild("group_0");
+	countArrow = wrenchModel.transform.FindChild("CounterClockwiseForceArrow").FindChild("group_0");
+	clockArrow.renderer.enabled = false;
+	countArrow.renderer.enabled = false;
 	
 	wrenchRot = new GameObject();
 	wrenchRot.transform.position = (wrenchTurnAxis.renderer.bounds.center)+(Vector3(0,0,0.0019));
@@ -91,15 +100,21 @@ function Spin (dir : Vector3){
 		yield;
 		
 		if ((prevRotNum.y - wrenchTurnAxis.eulerAngles.y) < 1.0 && (prevRotNum.y - wrenchTurnAxis.eulerAngles.y) > -1.0) {
+			//clockArrow.renderer.enabled = false;
+			//countArrow.renderer.enabled = false;
 			continue;
 		}
 		else if (((prevRotNum.y - wrenchTurnAxis.eulerAngles.y + 360.0) % 360.0) > 180.0){
+			clockArrow.renderer.enabled = true;
+			countArrow.renderer.enabled = false;
 			nutModel.transform.position = Vector3.Lerp(nutModel.transform.position, startM.position, 0.004);
 			//nutModel.transform.position = Vector3.MoveTowards(nutModel.transform.position, startM.position, Time.deltaTime*0.005);
 			//nutModel.transform.Rotate(Vector3.up*Time.deltaTime*100.0, Space.World);
 			prevRotNum = wrenchTurnAxis.eulerAngles;
 		}
 		else if (((prevRotNum.y - wrenchTurnAxis.eulerAngles.y + 360.0) % 360.0) <= 180.0){
+			countArrow.renderer.enabled = true;
+			clockArrow.renderer.enabled = false;
 			nutModel.transform.position = Vector3.Lerp(nutModel.transform.position, endM.position, 0.004);
 			//nutModel.transform.position = Vector3.MoveTowards(nutModel.transform.position, endM.position, Time.deltaTime*0.005);
 			//nutModel.transform.Rotate(Vector3.down*Time.deltaTime*100.0, Space.World);
