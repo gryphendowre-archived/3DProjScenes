@@ -86,23 +86,27 @@ function Spin (dir : Vector3){
 		//Debug.Log(wrenchRot.transform.rotation.y);
 		//Debug.Log(wrenchTurnAxis.eulerAngles);
 		
-		if ((prevRotNum.y - wrenchTurnAxis.eulerAngles.y) == 0) {
-			nutModel.transform.position = nutModel.transform.position;
-		}
-		else if (((prevRotNum.y - wrenchTurnAxis.eulerAngles.y + 360.0) % 360.0) > 180.0){
-			//nutModel.transform.position = Vector3.Lerp(endM.position, startM.position, Time.deltaTime*0.005);
-			nutModel.transform.position = Vector3.MoveTowards(nutModel.transform.position, startM.position, Time.deltaTime*0.005);
-			//nutModel.transform.Rotate(Vector3.up*Time.deltaTime*100.0, Space.World);
-		}
-		else if (((prevRotNum.y - wrenchTurnAxis.eulerAngles.y + 360.0) % 360.0) <= 180.0){
-			//nutModel.transform.position = Vector3.Lerp(startM.position, endM.position, Time.deltaTime*0.005);
-			nutModel.transform.position = Vector3.MoveTowards(nutModel.transform.position, endM.position, Time.deltaTime*0.005);
-			//nutModel.transform.Rotate(Vector3.down*Time.deltaTime*100.0, Space.World);
-		}
-		//nutModel.transform.position = Vector3.MoveTowards(nutModel.transform.position, endM.position, Time.deltaTime*0.005);	
 		wrenchRot.transform.rotation.x = 0;
 		wrenchRot.transform.rotation.z = 0;
 		yield;
+		
+		if ((prevRotNum.y - wrenchTurnAxis.eulerAngles.y) < 1.0 && (prevRotNum.y - wrenchTurnAxis.eulerAngles.y) > -1.0) {
+			continue;
+		}
+		else if (((prevRotNum.y - wrenchTurnAxis.eulerAngles.y + 360.0) % 360.0) > 180.0){
+			nutModel.transform.position = Vector3.Lerp(nutModel.transform.position, startM.position, 0.004);
+			//nutModel.transform.position = Vector3.MoveTowards(nutModel.transform.position, startM.position, Time.deltaTime*0.005);
+			//nutModel.transform.Rotate(Vector3.up*Time.deltaTime*100.0, Space.World);
+			prevRotNum = wrenchTurnAxis.eulerAngles;
+		}
+		else if (((prevRotNum.y - wrenchTurnAxis.eulerAngles.y + 360.0) % 360.0) <= 180.0){
+			nutModel.transform.position = Vector3.Lerp(nutModel.transform.position, endM.position, 0.004);
+			//nutModel.transform.position = Vector3.MoveTowards(nutModel.transform.position, endM.position, Time.deltaTime*0.005);
+			//nutModel.transform.Rotate(Vector3.down*Time.deltaTime*100.0, Space.World);
+			prevRotNum = wrenchTurnAxis.eulerAngles;
+		}
+		//nutModel.transform.position = Vector3.MoveTowards(nutModel.transform.position, endM.position, Time.deltaTime*0.005);	
+
 		
 	}
 	
