@@ -22,8 +22,15 @@ private var originalRot : Quaternion;
 private var offsetRot : Quaternion;
 var numberAverages : int = 3;
 
+//force Arrow locations
+var currentClockArrowPos : Vector3;
+var currentCountArrowPos : Vector3;
+
 var turnSpeed = 1.0;
 //var rotateObject = true;
+
+var experimentRun : boolean = false;
+var rotateWrenchbool : boolean = false;	
 
 function Start () {
 	numberAverages = Mathf.Clamp (numberAverages, 1, numberAverages);
@@ -35,10 +42,13 @@ function Start () {
 	countArrow = wrenchModel.transform.FindChild("CounterClockwiseForceArrow").FindChild("group_0");
 	torqueClockArrow = wrenchModel.transform.FindChild("TorqueClockwise").FindChild("group_0");
 	torqueCountArrow = wrenchModel.transform.FindChild("TorqueCounterClockwise").FindChild("group_0");
+	currentClockArrowPos = clockArrow.transform.position;
+	currentCountArrowPos = countArrow.transform.position;
 	torqueClockArrow.renderer.enabled = false;
 	torqueCountArrow.renderer.enabled = false;
 	clockArrow.renderer.enabled = false;
 	countArrow.renderer.enabled = false;
+	wrenchModel.collider.enabled = false;
 	
 	wrenchRot = new GameObject();
 	wrenchRot.transform.position = (wrenchTurnAxis.renderer.bounds.center)+(Vector3(0,0,0.0019));
@@ -61,6 +71,22 @@ function Update () {
 	//wrenchRot.transform.Rotate(Vector3.up * Time.deltaTime*100, Space.World);
 	if (Input.GetMouseButtonDown(0)){
 		onMouseDown();
+	}
+	
+	if (rotateWrenchbool == true){
+		var rad2deg : float = (totTorq* (180 / Mathf.PI));
+		var prevRotNum2 : Vector3;
+		prevRotNum2 = wrenchTurnAxis.eulerAngles;
+		wrenchRot.transform.Rotate(0,((-1)*rad2deg*Time.deltaTime)/30,0);
+		
+		if (((prevRotNum2.y - wrenchTurnAxis.eulerAngles.y + 360.0) % 360.0) > 180.0){
+			nutModel.transform.position = Vector3.Lerp(nutModel.transform.position, startM.position, ((rad2deg*Time.deltaTime)/30)*0.004);
+			prevRotNum2 = wrenchTurnAxis.eulerAngles;
+		}
+		if (((prevRotNum2.y - wrenchTurnAxis.eulerAngles.y + 360.0) % 360.0) <= 180.0){
+			nutModel.transform.position = Vector3.Lerp(nutModel.transform.position, endM.position,((rad2deg*Time.deltaTime)/30)*0.004);
+			prevRotNum2 = wrenchTurnAxis.eulerAngles;
+		}
 	}
 	
 }
@@ -111,20 +137,20 @@ function Spin (dir : Vector3){
 			continue;
 		}
 		else if (((prevRotNum.y - wrenchTurnAxis.eulerAngles.y + 360.0) % 360.0) > 180.0){
-			clockArrow.renderer.enabled = true;
-			torqueClockArrow.renderer.enabled = true;
-			countArrow.renderer.enabled = false;
-			torqueCountArrow.renderer.enabled = false;
+			//~ clockArrow.renderer.enabled = true;
+			//~ torqueClockArrow.renderer.enabled = true;
+			//~ countArrow.renderer.enabled = false;
+			//~ torqueCountArrow.renderer.enabled = false;
 			nutModel.transform.position = Vector3.Lerp(nutModel.transform.position, startM.position, 0.004);
 			//nutModel.transform.position = Vector3.MoveTowards(nutModel.transform.position, startM.position, Time.deltaTime*0.005);
 			//nutModel.transform.Rotate(Vector3.up*Time.deltaTime*100.0, Space.World);
 			prevRotNum = wrenchTurnAxis.eulerAngles;
 		}
 		else if (((prevRotNum.y - wrenchTurnAxis.eulerAngles.y + 360.0) % 360.0) <= 180.0){
-			countArrow.renderer.enabled = true;
-			torqueCountArrow.renderer.enabled=true;
-			clockArrow.renderer.enabled = false;
-			torqueClockArrow.renderer.enabled = false;
+			//~ countArrow.renderer.enabled = true;
+			//~ torqueCountArrow.renderer.enabled=true;
+			//~ clockArrow.renderer.enabled = false;
+			//~ torqueClockArrow.renderer.enabled = false;
 			nutModel.transform.position = Vector3.Lerp(nutModel.transform.position, endM.position, 0.004);
 			//nutModel.transform.position = Vector3.MoveTowards(nutModel.transform.position, endM.position, Time.deltaTime*0.005);
 			//nutModel.transform.Rotate(Vector3.down*Time.deltaTime*100.0, Space.World);
@@ -139,40 +165,100 @@ var forceAmount : String = "5";
 var radiusAmount : String = "0";
 var forceInt: int = 0;
 var radInt : int = 0;
-var totInt : int = 0;
+var totTorq : double = 0;
 var stringTot : String = "0";
 
 function OnGUI(){
-	GUI.Box(Rect(10,10,100,90), "Wrench Mode");
+	GUI.Box(Rect(10,10,100,110), "Wrench Mode");
 	
 	if (GUI.Button(Rect(20,40,80,20),"FreeForm")){
 		Debug.Log("Free Form Mode!");
 		wrenchModel.collider.enabled = true;
+		experimentRun = true;
 	}
 	if (GUI.Button(Rect(20,70,80,20),"Edit/Auto")){
 		Debug.Log("Edit/Auto Mode");
 		wrenchModel.collider.enabled = false;
 	}
+	if (GUI.Button(Rect(20,100,80,20),"Restart")){
+		Application.LoadLevel(Application.loadedLevel);
+	}
 	
-	GUI.Box(Rect(10,110,100,105),"Input values");
-	GUI.Box(Rect(20,130,80,40),"Force");
-	forceAmount = GUI.TextField(Rect(22,150,76,20),forceAmount,25);
-	GUI.Box(Rect(20,170,80,40),"Radius");
-	radiusAmount = GUI.TextField(Rect(22,190,76,20),radiusAmount,25);
+	GUI.Box(Rect(10,130,100,105),"Input values");
+	GUI.Box(Rect(20,150,80,40),"Force");
+	forceAmount = GUI.TextField(Rect(22,170,76,20),forceAmount,25);
+	GUI.Box(Rect(20,190,80,40),"Radius");
+	radiusAmount = GUI.TextField(Rect(22,210,76,20),radiusAmount,25);
 	
-	GUI.Box(Rect(10,220,100,50), "Torque Output");
-	GUI.TextField(Rect(20,240,80,20),stringTot);
+	GUI.Box(Rect(10,240,100,55), "Torque Output");
+	GUI.TextField(Rect(20,270,80,20),stringTot);
 	
 	
 	if (Event.current.keyCode == KeyCode.Return) {
-	    if (forceAmount != "" && radiusAmount != ""){
+	    if (forceAmount != "" && radiusAmount != "" && experimentRun == false){
 			forceInt = parseInt(forceAmount);
 			radInt = parseInt(radiusAmount);
-			totInt = forceInt+radInt;
-			stringTot = totInt.ToString();
+			translateForceArrow(forceInt, radInt);
+			totTorq = calcTorqueVal(forceInt,radInt);
+			stringTot = totTorq.ToString();
+			if(forceInt < 0){
+				clockArrow.renderer.enabled = true;
+				countArrow.renderer.enabled = false;
+			}
+			if(forceInt > 0){
+			countArrow.renderer.enabled = true;
+			clockArrow.renderer.enabled = false;
+			}
 		}
-		else
-			totInt = 0;
-    Debug.Log(totInt);
+		else if (experimentRun == false){
+			totTorq = 0;
+			stringTot = totTorq.ToString();
+		}
+		if (experimentRun == true){
+			GUI.TextField(Rect(20,330,80,20),"Please reset the experiment");
+		}
+    //Debug.Log(originalCountArrowY);
 	}
+	
+	if (GUI.Button(Rect(20,300,80,20), "Begin Test")){
+		if (forceInt > 0 && totTorq !=0){
+			//countArrow
+			experimentRun = true;
+			torqueCountArrow.renderer.enabled=true;
+			torqueClockArrow.renderer.enabled = false;
+			rotateWrenchbool = true;			
+		}
+		if (forceInt < 0 && totTorq != 0){
+			//clockArrow
+			experimentRun = true;
+			torqueClockArrow.renderer.enabled = true;
+			torqueCountArrow.renderer.enabled = false;
+			rotateWrenchbool = true;
+		}
+	}
+	
+}
+
+function translateForceArrow(frc, radus){
+	var temp : float = 0;
+	var frcT : int = frc;
+	var radusT : float = radus	;
+	//clockArrow.transform.localPosition = ((clockArrow.transform.localPosition - wrenchModel.transform.localPosition).normalized) *((radusT));
+	clockArrow.transform.position.z = currentClockArrowPos.z - ((radusT-1)*(0.01));
+	countArrow.transform.position.z = currentCountArrowPos.z - ((radusT-1)*(0.01));
+	//~ Debug.Log(clockArrow.transform.position.x);
+	//~ Debug.Log(clockArrow.transform.position.y);
+	//~ Debug.Log(clockArrow.transform.position.z);
+}
+
+function calcTorqueVal(frc, radus){
+	var temp : float = 0;
+	var frcT : int = frc;
+	var radusT : int = radus;
+	var degR : int = 45;
+	var deg2rad : float = degR * (Mathf.PI / 180);
+	temp = frcT*radusT*Mathf.Sin(deg2rad);
+	return temp;
+	
+	
 }
