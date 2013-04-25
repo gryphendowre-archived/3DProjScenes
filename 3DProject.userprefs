@@ -1,10 +1,9 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\testRotate.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Project Assets\WrenchAssets\Scripts\testRotate.js">
     <Files>
-      <File FileName="Assets\wrenchRotate.js" Line="20" Column="35" />
-      <File FileName="Assets\boltRotate.js" Line="1" Column="1" />
-      <File FileName="Assets\testRotate.js" Line="67" Column="79" />
+      <File FileName="Assets\Project Assets\WrenchAssets\Scripts\testRotate.js" Line="159" Column="37" />
+      <File FileName="Assets\Project Assets\WrenchAssets\GUIController.js" Line="3" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

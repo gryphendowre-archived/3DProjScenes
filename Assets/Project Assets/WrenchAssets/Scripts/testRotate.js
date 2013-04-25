@@ -14,6 +14,8 @@ var endM : Transform;
 //force rotation arrows
 var clockArrow : Transform;
 var countArrow : Transform;
+var torqueClockArrow : Transform;
+var torqueCountArrow : Transform;
 
 //rotation testing
 private var originalRot : Quaternion;
@@ -31,6 +33,10 @@ function Start () {
 	
 	clockArrow = wrenchModel.transform.FindChild("ClockwiseForceArrow").FindChild("group_0");
 	countArrow = wrenchModel.transform.FindChild("CounterClockwiseForceArrow").FindChild("group_0");
+	torqueClockArrow = wrenchModel.transform.FindChild("TorqueClockwise").FindChild("group_0");
+	torqueCountArrow = wrenchModel.transform.FindChild("TorqueCounterClockwise").FindChild("group_0");
+	torqueClockArrow.renderer.enabled = false;
+	torqueCountArrow.renderer.enabled = false;
 	clockArrow.renderer.enabled = false;
 	countArrow.renderer.enabled = false;
 	
@@ -106,7 +112,9 @@ function Spin (dir : Vector3){
 		}
 		else if (((prevRotNum.y - wrenchTurnAxis.eulerAngles.y + 360.0) % 360.0) > 180.0){
 			clockArrow.renderer.enabled = true;
+			torqueClockArrow.renderer.enabled = true;
 			countArrow.renderer.enabled = false;
+			torqueCountArrow.renderer.enabled = false;
 			nutModel.transform.position = Vector3.Lerp(nutModel.transform.position, startM.position, 0.004);
 			//nutModel.transform.position = Vector3.MoveTowards(nutModel.transform.position, startM.position, Time.deltaTime*0.005);
 			//nutModel.transform.Rotate(Vector3.up*Time.deltaTime*100.0, Space.World);
@@ -114,7 +122,9 @@ function Spin (dir : Vector3){
 		}
 		else if (((prevRotNum.y - wrenchTurnAxis.eulerAngles.y + 360.0) % 360.0) <= 180.0){
 			countArrow.renderer.enabled = true;
+			torqueCountArrow.renderer.enabled=true;
 			clockArrow.renderer.enabled = false;
+			torqueClockArrow.renderer.enabled = false;
 			nutModel.transform.position = Vector3.Lerp(nutModel.transform.position, endM.position, 0.004);
 			//nutModel.transform.position = Vector3.MoveTowards(nutModel.transform.position, endM.position, Time.deltaTime*0.005);
 			//nutModel.transform.Rotate(Vector3.down*Time.deltaTime*100.0, Space.World);
@@ -124,15 +134,45 @@ function Spin (dir : Vector3){
 
 		
 	}
+}
+var forceAmount : String = "5";
+var radiusAmount : String = "0";
+var forceInt: int = 0;
+var radInt : int = 0;
+var totInt : int = 0;
+var stringTot : String = "0";
+
+function OnGUI(){
+	GUI.Box(Rect(10,10,100,90), "Wrench Mode");
+	
+	if (GUI.Button(Rect(20,40,80,20),"FreeForm")){
+		Debug.Log("Free Form Mode!");
+		wrenchModel.collider.enabled = true;
+	}
+	if (GUI.Button(Rect(20,70,80,20),"Edit/Auto")){
+		Debug.Log("Edit/Auto Mode");
+		wrenchModel.collider.enabled = false;
+	}
+	
+	GUI.Box(Rect(10,110,100,105),"Input values");
+	GUI.Box(Rect(20,130,80,40),"Force");
+	forceAmount = GUI.TextField(Rect(22,150,76,20),forceAmount,25);
+	GUI.Box(Rect(20,170,80,40),"Radius");
+	radiusAmount = GUI.TextField(Rect(22,190,76,20),radiusAmount,25);
+	
+	GUI.Box(Rect(10,220,100,50), "Torque Output");
+	GUI.TextField(Rect(20,240,80,20),stringTot);
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	if (Event.current.keyCode == KeyCode.Return) {
+	    if (forceAmount != "" && radiusAmount != ""){
+			forceInt = parseInt(forceAmount);
+			radInt = parseInt(radiusAmount);
+			totInt = forceInt+radInt;
+			stringTot = totInt.ToString();
+		}
+		else
+			totInt = 0;
+    Debug.Log(totInt);
+	}
 }

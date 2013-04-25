@@ -5,7 +5,7 @@
 	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 	<ProductVersion>10.0.20506</ProductVersion>
 	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{A309D6A5-212A-DCC5-5427-CAA28A9AA162}</ProjectGuid>
+	<ProjectGuid>{E9B85277-CD7B-2ABB-9489-2ECBE785E7AB}</ProjectGuid>
 	<OutputType>Library</OutputType>
 	<AppDesignerFolder>Properties</AppDesignerFolder>
 	<RootNamespace></RootNamespace>
@@ -44,6 +44,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Project Assets\WrenchAssets\GUIController.js" />
      <Compile Include="Assets\Project Assets\WrenchAssets\Scripts\boltRotate.js" />
      <Compile Include="Assets\Project Assets\WrenchAssets\Scripts\testRotate.js" />
      <Compile Include="Assets\Project Assets\WrenchAssets\Scripts\testRotate2.js" />
@@ -144,7 +145,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-firstpass-vs.csproj">
-      <Project>{A5044928-BA60-9A5B-EF30-160389FFEF95}</Project>      <Name>Assembly-CSharp-firstpass-vs</Name>    </ProjectReference>
+      <Project>{139D056B-C8E0-66B8-332B-168934DC882B}</Project>      <Name>Assembly-CSharp-firstpass-vs</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
